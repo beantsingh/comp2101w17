@@ -1,5 +1,6 @@
+#!/bin/bash
+#My lab 1.3
 # helloscript.sh
-#My lab 1.1
 # This script displays the string “Hello World!”
 
 # This is a silly way of creating the output text by starting with something else and stream editing it in a pipeline
