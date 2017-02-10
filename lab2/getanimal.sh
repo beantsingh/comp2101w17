@@ -9,4 +9,4 @@ declare -A animals
  num=$((numrequested - 1))
  colour=${colours[$num]}
  animal=${animals[$colour]}
-echo "$numrequested finds a $colour $animal"
+echo "Index $numrequested finds a $colour $animal"
