@@ -13,7 +13,7 @@ function mydname ()
     echo ''
     if [ -z $(hostname -d) ];
     then 
-       echo "This computer has not any domain "
+       echo "This computer has no any domain "
     else
         echo "The domain name for this computer is $(hostname -d)"
     fi
@@ -22,26 +22,26 @@ function mydname ()
 function myipaddress ()
 {
     echo ''
-    echo "This is my IP Address $(ifconfig | grep "inet addr" | head -n1 | cut -d: -f2 | cut -d" " -f1) for my device"
+    echo "This is the IP Address $(ifconfig | grep "inet addr" | head -n1 | cut -d: -f2 | cut -d" " -f1) for this device"
     return 0
 }
 function myosversion ()
 {
     echo''
-    echo "This is my os VERSION $(cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2)"
+    echo "The OS VERSION of this computer is $(cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2)"
     return 0
     
 }
 function myosname ()
 {
     echo ''
-    echo "This is my os NAME $(cat /etc/os-release | grep "NAME" | head -n1 | cut -d\" -f2)"
+    echo "The OS NAME of this computer is $(cat /etc/os-release | grep "NAME" | head -n1 | cut -d\" -f2)"
         
 }
 function mycpuinfo ()
 {
     echo ''
-    echo "This is CPU MODEL NAME $(cat /proc/cpuinfo | grep "model name" | head -n1 | cut -d: -f2 | cut -d" " -f2-6) for my device"
+    echo "The CPU MODEL NAME of this device is $(cat /proc/cpuinfo | grep "model name" | head -n1 | cut -d: -f2 | cut -d" " -f2-6)"
     echo "This CPU has $(lscpu | grep "^CPU(s):" | awk '{print $2}')" cores
     echo "This CPU can operate $(lscpu | grep "CPU op-mode(s):" | awk '{print $3,$4}') modes"
     return 0
@@ -62,7 +62,7 @@ function mydiskspace ()
     i=0
     while [ $i -lt ${#disks[@]} ]
     do 
-    echo "The disk ${ndisk[$i]} has total of ${disks[$i]} available"
+    echo "The disk ${ndisk[$i]} has total of ${disks[$i]} space available"
     i=$((i+1))
     done 
     return 0
@@ -151,6 +151,9 @@ do
         ;;
         
         -mycpu)         mycpuinfo
+        ;;
+        
+        -mymem)         mysysmemory
         ;;
         
         -myds)          mydiskspace
