@@ -4,7 +4,7 @@
 function mysysname ()
 {
     echo ''
-    hostname -s
+    echo "The system name is: $(hostname -s)"
     return 0
     
 }
@@ -22,20 +22,40 @@ function mydname ()
 function myipaddress ()
 {
     echo ''
+    if [ -n $(dpkg-query -l | grep ii | awk '{print  $2}' | grep net-tools) ]
+    then
     echo "This is the IP Address $(ifconfig | grep "inet addr" | head -n1 | cut -d: -f2 | cut -d" " -f1) for this device"
     return 0
+    else
+    echo "To run this command system must have net-tools installed" >&2
+    exit 0
+    fi
+    
 }
 function myosversion ()
 {
     echo''
+    if [ -n $(ls /etc/os-release ) ]
+    then
     echo "The OS VERSION of this computer is $(cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2)"
     return 0
+    else
+    echo "To run this command system must have /etc/os-release file" >&2
+    exit 0
+    fi
     
 }
 function myosname ()
 {
     echo ''
+    if [ -n $(ls /etc/os-release ) ]
+    then
     echo "The OS NAME of this computer is $(cat /etc/os-release | grep "NAME" | head -n1 | cut -d\" -f2)"
+    return 0
+    else
+    echo "To run this command system must have /etc/os-release file" >&2
+    exit 0
+    fi
         
 }
 function mycpuinfo ()
@@ -71,7 +91,7 @@ function mydiskspace ()
 function myprinters ()
 {
     echo ''
-    if [ -z "$(lpstat -a)" ];
+    if [ -z `lpstat -a` ]
     then
         echo "This computer has no printers"
     else
@@ -100,6 +120,51 @@ function mysoftwares ()
 }
 function myerorr ()
 {
+    params=0
+    while [ $params -lt ${#arg[@]} ]
+    do
+        case ${arg[$params]} in
+        
+            -mysys)         mysysname
+            ;;
+            
+            -mydn)          mydname
+            ;;
+            
+            -myip)          myipaddress
+            ;;
+            
+            -myosv)         myosversion
+            ;;
+            
+            -myosn)         myosname
+            ;;
+            
+            -mycpu)         mycpuinfo
+            ;;
+            
+            -mymem)         mysysmemory
+            ;;
+            
+            -myds)          mydiskspace
+            ;;
+            
+            -mylp)          myprinters
+            ;;
+            
+            -mysoft)        mysoftwares
+            ;;
+            
+            -help|--h)      myhelp
+            ;;
+            
+            *)              echo "$0: invalid ${arg[$params]}" >&2
+                            echo "Try $0 -help or --h"
+            ;;
+            
+        esac
+        params=$((params+1))
+    done
     return 0
 }
 function myhelp ()
@@ -128,53 +193,5 @@ function myhelp ()
     echo ""
     exit 0
 }
-
-params=1
-
-while [ $params -le $# ]
-do 
-    case $1 in
-    
-        -mysys)         mysysname
-        ;;
-        
-        -mydn)          mydname
-        ;;
-        
-        -myip)          myipaddress
-        ;;
-        
-        -myosv)         myosversion
-        ;;
-        
-        -myosn)         myosname
-        ;;
-        
-        -mycpu)         mycpuinfo
-        ;;
-        
-        -mymem)         mysysmemory
-        ;;
-        
-        -myds)          mydiskspace
-        ;;
-        
-        -mylp)          myprinters
-        ;;
-        
-        -mysoft)        mysoftwares
-        ;;
-    
-        -error)         myerorr
-        ;;
-        
-        -help|--h)      myhelp
-        ;;
-        
-        *)              error
-                        myhelp
-        ;;
-        
-    esac
-    shift
-done
+arg=($(echo "$@"))
+myerorr
