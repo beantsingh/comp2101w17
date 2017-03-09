@@ -118,7 +118,7 @@ function mysoftwares ()
         return 0
     fi
 }
-function myerorr ()
+function myerror ()
 {
     params=0
     while [ $params -lt ${#arg[@]} ]
@@ -194,4 +194,4 @@ function myhelp ()
     exit 0
 }
 arg=($(echo "$@"))
-myerorr
+myerror
