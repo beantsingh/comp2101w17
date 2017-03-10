@@ -13,7 +13,7 @@ function mydname ()
     echo ''
     if [ -z $(hostname -d) ];
     then 
-       echo "This computer has no any domain "
+       echo "This computer has no any domain"
     else
         echo "The domain name for this computer is $(hostname -d)"
     fi
@@ -91,13 +91,27 @@ function mydiskspace ()
 function myprinters ()
 {
     echo ''
-    if [ -z `lpstat -a` ]
+    #Check if cups are installed
+    if [ -z $(dpkg-query -l | grep ii | awk '{print  $2}' | grep "^cups" | sort -n |head -1) ]
     then
-        echo "This computer has no printers"
+        echo "cups are not installed" >&2
     else
-        echo "List of Printers Available"
-        echo "=========================="
-        lpstat -a | awk '{print $1}'
+        service cups status > /dev/null 2>&1
+        if [ $? -eq 3 ]
+        then
+            echo "cups are not running" >&2
+            echo "Please start cups to run this command" >&2
+        else
+            lpstat -a > /dev/null 2>&1
+            if [ $? -eq 0 ]
+            then
+                echo "List of Printers Available"
+                echo "=========================="
+               echo $(lpstat -a | awk '{print $1}' )
+            else
+                echo "This computer has no printer" >&2
+            fi
+        fi
     fi
     return 0
     
@@ -194,4 +208,17 @@ function myhelp ()
     exit 0
 }
 arg=($(echo "$@"))
-myerror
+if [[ -n ${arg[0]} ]]
+then
+    myerror
+else
+    mysysname
+    mydname
+    myipaddress
+    myosversion
+    myosname
+    mycpuinfo
+    mydiskspace
+    myprinters
+    mysoftwares
+fi
